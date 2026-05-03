@@ -243,9 +243,13 @@ function checkLevelUp() {
 function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 function clamp(v, lo, hi) { return Math.min(Math.max(v, lo), hi); }
 
+// Multipliers for enemy spell calculations
+const ENEMY_SPELL_ATK_MULT = 1.5;   // enemies cast spells at 1.5× their ATK
+const ENEMY_SPELL_DEF_MULT = 0.5;   // player's DEF counts at 50% vs enemy spells
+
 function calcDamage(atk, def, mult = 1.0) {
   const base = Math.max(1, atk - Math.floor(def * 0.5));
-  const variance = 0.85 + Math.random() * 0.3;   // ±15 %
+  const variance = 0.85 + Math.random() * 0.3;   // range 0.85× – 1.15×
   const isCrit = Math.random() < 0.1;
   return {
     damage: Math.max(1, Math.round(base * mult * variance * (isCrit ? 2 : 1))),
@@ -445,7 +449,7 @@ function execEnemyAction(e, action) {
 
   if (action === 'spell' && e.spells.length) {
     const spellName = e.spells[rand(0, e.spells.length - 1)];
-    const { damage: raw } = calcDamage(Math.round(e.atk * 1.5), Math.round(p.def * 0.5));
+    const { damage: raw } = calcDamage(Math.round(e.atk * ENEMY_SPELL_ATK_MULT), Math.round(p.def * ENEMY_SPELL_DEF_MULT));
     const dmg = S.defending ? Math.floor(raw * 0.5) : raw;
     dealDamageToPlayer(dmg, false);
     addLog(`🔮 ${e.name}: ${spellName} — ${dmg} урона!`, 'enemy-special');
