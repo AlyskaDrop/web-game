@@ -13,13 +13,13 @@
   <div class="auth-box">
     <div class="title-sword">⚔️</div>
     <div class="title-logo">SWORD ART ONLINE</div>
-    <div class="title-sub">Aincrad Chronicles</div>
+    <div class="title-sub">Хроники Аинкрада</div>
     <div class="auth-form">
-      <input id="login-user" type="text" placeholder="Username" maxlength="20" autocomplete="off"/>
-      <input id="login-pass" type="password" placeholder="Password" maxlength="30"/>
-      <button id="login-btn" class="btn-primary">Login</button>
-      <div class="auth-divider">— OR —</div>
-      <button id="goto-register-btn" class="btn-secondary">Create Account</button>
+      <input id="login-user" type="text" placeholder="Имя пользователя" maxlength="20" autocomplete="off"/>
+      <input id="login-pass" type="password" placeholder="Пароль" maxlength="30"/>
+      <button id="login-btn" class="btn-primary">Войти</button>
+      <div class="auth-divider">— ИЛИ —</div>
+      <button id="goto-register-btn" class="btn-secondary">Создать аккаунт</button>
     </div>
     <div id="login-error" class="auth-error"></div>
   </div>
@@ -28,14 +28,14 @@
 <!-- ═══════════ REGISTER ═══════════ -->
 <div id="register-screen" class="screen hidden">
   <div class="auth-box">
-    <div class="title-logo">CREATE ACCOUNT</div>
-    <div class="title-sub">Join Aincrad</div>
+    <div class="title-logo">РЕГИСТРАЦИЯ</div>
+    <div class="title-sub">Присоединиться к Аинкраду</div>
     <div class="auth-form">
-      <input id="reg-user" type="text" placeholder="Username (3–16 chars)" maxlength="16" autocomplete="off"/>
-      <input id="reg-pass" type="password" placeholder="Password (4+ chars)" maxlength="30"/>
-      <input id="reg-pass2" type="password" placeholder="Confirm Password" maxlength="30"/>
-      <button id="register-btn" class="btn-primary">Register</button>
-      <button id="back-to-login-btn" class="btn-secondary">Back to Login</button>
+      <input id="reg-user" type="text" placeholder="Имя пользователя (3–16 символов)" maxlength="16" autocomplete="off"/>
+      <input id="reg-pass" type="password" placeholder="Пароль (от 4 символов)" maxlength="30"/>
+      <input id="reg-pass2" type="password" placeholder="Подтвердите пароль" maxlength="30"/>
+      <button id="register-btn" class="btn-primary">Зарегистрироваться</button>
+      <button id="back-to-login-btn" class="btn-secondary">← Назад ко входу</button>
     </div>
     <div id="reg-error" class="auth-error"></div>
   </div>
@@ -44,16 +44,16 @@
 <!-- ═══════════ CHARACTER CREATE ═══════════ -->
 <div id="char-create-screen" class="screen hidden">
   <div class="char-create-box">
-    <div class="title-logo">CREATE CHARACTER</div>
-    <div class="title-sub">Choose your path in Aincrad</div>
+    <div class="title-logo">СОЗДАНИЕ ПЕРСОНАЖА</div>
+    <div class="title-sub">Выберите свой путь в Аинкраде</div>
     <div class="cc-name-row">
-      <label>Character Name</label>
-      <input id="cc-name" type="text" placeholder="Enter name…" maxlength="18" autocomplete="off"/>
+      <label>Имя персонажа</label>
+      <input id="cc-name" type="text" placeholder="Введите имя…" maxlength="18" autocomplete="off"/>
     </div>
-    <div class="cc-class-label">Choose Class</div>
+    <div class="cc-class-label">Выберите класс</div>
     <div id="cc-classes" class="cc-classes"></div>
     <div id="cc-preview" class="cc-preview"></div>
-    <button id="cc-confirm-btn" class="btn-primary" disabled>Begin Adventure</button>
+    <button id="cc-confirm-btn" class="btn-primary" disabled>Начать приключение</button>
   </div>
 </div>
 
@@ -65,9 +65,9 @@
     <div class="hub-sidebar">
       <div class="sidebar-player-card">
         <div id="hub-player-icon" class="hub-player-icon">⚔️</div>
-        <div id="hub-player-name" class="hub-player-name">Player</div>
-        <div id="hub-player-class" class="hub-player-class">Swordsman</div>
-        <div id="hub-player-level" class="hub-player-level">Lv.1</div>
+        <div id="hub-player-name" class="hub-player-name">Игрок</div>
+        <div id="hub-player-class" class="hub-player-class">Мечник</div>
+        <div id="hub-player-level" class="hub-player-level">Ур.1</div>
         <div class="sidebar-bar-group">
           <div class="sbar-label">HP <span id="hub-hp-val">120/120</span></div>
           <div class="sbar-bg"><div id="hub-hp-fill" class="sbar-fill hp"></div></div>
@@ -75,31 +75,31 @@
           <div class="sbar-bg"><div id="hub-mp-fill" class="sbar-fill mp"></div></div>
         </div>
         <div id="hub-col" class="hub-col">💰 0 Col</div>
-        <div id="hub-gems" class="hub-gems">💎 0 Gems</div>
+        <div id="hub-gems" class="hub-gems">💎 0 Алмазов</div>
       </div>
       <nav class="hub-nav">
-        <button class="hub-nav-btn" id="nav-equip-btn">⚔️ Equipment</button>
-        <button class="hub-nav-btn" id="nav-items-btn">🎒 Items</button>
-        <button class="hub-nav-btn" id="nav-quest-btn">📋 Quests</button>
-        <button class="hub-nav-btn" id="nav-pvp-btn">🥊 PvP Arena</button>
-        <button class="hub-nav-btn" id="nav-trophy-btn">🏆 Trophies</button>
-        <button class="hub-nav-btn" id="nav-donate-btn">💎 Premium Shop</button>
-        <button class="hub-nav-btn danger" id="nav-logout-btn">🚪 Logout</button>
+        <button class="hub-nav-btn" id="nav-equip-btn">⚔️ Снаряжение</button>
+        <button class="hub-nav-btn" id="nav-items-btn">🎒 Предметы</button>
+        <button class="hub-nav-btn" id="nav-quest-btn">📋 Задания</button>
+        <button class="hub-nav-btn" id="nav-pvp-btn">🥊 Арена PvP</button>
+        <button class="hub-nav-btn" id="nav-trophy-btn">🏆 Трофеи</button>
+        <button class="hub-nav-btn" id="nav-donate-btn">💎 Премиум</button>
+        <button class="hub-nav-btn danger" id="nav-logout-btn">🚪 Выйти</button>
       </nav>
     </div>
 
     <!-- Main -->
     <div class="hub-main">
       <div class="hub-floor-header">
-        <div id="hub-arc-name" class="hub-arc-name">Forest of Beginnings</div>
-        <div id="hub-floor-label" class="hub-floor-label">Floor 1 / 100</div>
+        <div id="hub-arc-name" class="hub-arc-name">Лес Начала</div>
+        <div id="hub-floor-label" class="hub-floor-label">Этаж 1 / 10</div>
         <div class="hub-xp-row">
           <div class="hub-xp-bg"><div id="hub-xp-fill" class="hub-xp-fill"></div></div>
           <span id="hub-xp-text" class="hub-xp-text">0 / 50 XP</span>
         </div>
       </div>
       <div class="hub-locations">
-        <div class="hub-location-title">📍 Locations – Floor <span id="hub-loc-floor">1</span></div>
+        <div class="hub-location-title">📍 Локации – Этаж <span id="hub-loc-floor">1</span></div>
         <div id="hub-location-grid" class="hub-location-grid"></div>
       </div>
       <div id="hub-message" class="hub-message"></div>
@@ -112,10 +112,10 @@
 <div id="town-screen" class="screen hidden">
   <div class="full-screen-layout">
     <div class="screen-header">
-      <button id="town-back-btn" class="btn-back">← Back</button>
+      <button id="town-back-btn" class="btn-back back-to-hub">← Назад</button>
       <div>
-        <div id="town-title" class="screen-header-title">Tolbana</div>
-        <div id="town-subtitle" class="screen-header-sub">Safe Zone – Floor 1</div>
+        <div id="town-title" class="screen-header-title">Толбана</div>
+        <div id="town-subtitle" class="screen-header-sub">Безопасная зона – Этаж 1</div>
       </div>
     </div>
     <div id="town-npc-grid" class="town-npc-grid"></div>
@@ -126,18 +126,18 @@
 <div id="game-screen" class="screen hidden">
   <div class="game-wrapper">
     <div class="floor-bar">
-      <span id="floor-label" class="floor-label">Floor 1</span>
+      <span id="floor-label" class="floor-label">Этаж 1</span>
       <div class="xp-bar-wrap">
         <div class="xp-bar-bg"><div id="xp-fill" class="xp-bar-fill"></div></div>
         <div id="xp-text" class="xp-text">0 / 50 XP</div>
       </div>
-      <span id="level-label" class="level-label">Lv.1</span>
+      <span id="level-label" class="level-label">Ур.1</span>
     </div>
     <div class="battle-area">
       <div id="player-panel" class="combatant-panel player-panel">
-        <span class="panel-label">Player</span>
+        <span class="panel-label">Игрок</span>
         <div id="player-sprite" class="char-sprite">⚔️</div>
-        <div id="player-name" class="char-name">Hero</div>
+        <div id="player-name" class="char-name">Герой</div>
         <div class="stat-bars">
           <div class="stat-row">
             <span class="stat-icon">❤️</span>
@@ -153,7 +153,7 @@
         <div id="player-status" class="status-tags"></div>
       </div>
       <div id="enemy-panel" class="combatant-panel enemy-panel">
-        <span class="panel-label" id="enemy-panel-label">Enemy</span>
+        <span class="panel-label" id="enemy-panel-label">Враг</span>
         <div id="enemy-sprite" class="char-sprite">🐗</div>
         <div id="enemy-name" class="char-name">???</div>
         <div class="stat-bars">
@@ -174,15 +174,15 @@
     </div>
     <div id="action-bar" class="action-bar">
       <div class="action-group" id="main-action-group">
-        <button id="attack-btn" class="btn-action">⚔ Attack</button>
-        <button id="items-btn" class="btn-action item-btn">🎒 Items</button>
-        <button id="flee-btn"  class="btn-action flee-btn">🏃 Flee</button>
+        <button id="attack-btn" class="btn-action">⚔ Атака</button>
+        <button id="item-toggle-btn" class="btn-action item-btn">🎒 Предметы</button>
+        <button id="flee-btn"  class="btn-action flee-btn">🏃 Бежать</button>
       </div>
       <div class="action-sep" id="skills-sep"></div>
       <div id="skills-bar" class="action-group"></div>
       <div id="post-battle-bar" class="post-battle-bar hidden">
-        <button id="continue-btn" class="btn-action">▶ Continue</button>
-        <button id="retreat-btn"  class="btn-action flee-btn">🏠 Hub</button>
+        <button id="continue-btn" class="btn-action">▶ Продолжить</button>
+        <button id="retreat-btn"  class="btn-action flee-btn">🏠 В хаб</button>
       </div>
       <div id="item-panel" class="item-panel hidden">
         <div id="items-bar" class="action-group"></div>
@@ -195,19 +195,19 @@
 <div id="equip-screen" class="screen hidden">
   <div class="full-screen-layout">
     <div class="screen-header">
-      <button id="equip-back-btn" class="btn-back">← Back</button>
-      <div class="screen-header-title">⚔️ Equipment</div>
+      <button id="equip-back-btn" class="btn-back back-to-hub">← Назад</button>
+      <div class="screen-header-title">⚔️ Снаряжение</div>
       <div id="equip-col-display" class="col-display">💰 0 Col</div>
     </div>
     <div class="equip-layout">
       <div class="equip-slots-panel">
-        <div class="equip-panel-title">Equipped</div>
+        <div class="equip-panel-title">Экипировано</div>
         <div id="equip-slots" class="equip-slots-grid"></div>
-        <div id="equip-total-stats" class="equip-total-stats"></div>
+        <div id="equip-stats-panel" class="equip-total-stats"></div>
       </div>
       <div class="equip-inventory-panel">
-        <div class="equip-panel-title">Inventory <span id="equip-filter-tag" class="filter-tag"></span></div>
-        <div id="equip-inv-grid" class="equip-inv-grid"></div>
+        <div class="equip-panel-title">Инвентарь <span id="equip-filter-tag" class="filter-tag"></span></div>
+        <div id="equip-inventory" class="equip-inv-grid"></div>
       </div>
     </div>
   </div>
@@ -217,11 +217,11 @@
 <div id="items-screen" class="screen hidden">
   <div class="full-screen-layout">
     <div class="screen-header">
-      <button id="items-back-btn" class="btn-back">← Back</button>
-      <div class="screen-header-title">🎒 Items</div>
+      <button id="items-back-btn" class="btn-back back-to-hub">← Назад</button>
+      <div class="screen-header-title">🎒 Предметы</div>
       <div id="items-col-display" class="col-display">💰 0 Col</div>
     </div>
-    <div id="items-grid" class="items-grid"></div>
+    <div id="items-list" class="items-grid"></div>
   </div>
 </div>
 
@@ -229,13 +229,13 @@
 <div id="quest-screen" class="screen hidden">
   <div class="full-screen-layout">
     <div class="screen-header">
-      <button id="quest-back-btn" class="btn-back">← Back</button>
-      <div class="screen-header-title">📋 Quest Log</div>
+      <button id="quest-back-btn" class="btn-back back-to-hub">← Назад</button>
+      <div class="screen-header-title">📋 Журнал заданий</div>
     </div>
     <div class="quest-layout">
       <div id="quest-list" class="quest-list"></div>
       <div id="quest-detail" class="quest-detail">
-        <div class="empty-state">Select a quest to view details</div>
+        <div class="empty-state">Выберите задание для просмотра</div>
       </div>
     </div>
   </div>
@@ -245,14 +245,19 @@
 <div id="pvp-screen" class="screen hidden">
   <div class="full-screen-layout">
     <div class="screen-header">
-      <button id="pvp-back-btn" class="btn-back">← Back</button>
-      <div class="screen-header-title">🥊 PvP Arena</div>
-      <div id="pvp-record" class="pvp-record">0W / 0L</div>
+      <button id="pvp-back-btn" class="btn-back back-to-hub">← Назад</button>
+      <div class="screen-header-title">🥊 Арена PvP</div>
+      <div id="pvp-record" class="pvp-record">0П / 0П</div>
     </div>
     <div class="pvp-layout">
-      <div id="pvp-opponent-list" class="pvp-opponent-list"></div>
-      <div id="pvp-detail" class="pvp-detail">
-        <div class="empty-state">Select an opponent to challenge</div>
+      <div id="pvp-list" class="pvp-opponent-list"></div>
+      <div id="pvp-detail-panel" class="pvp-detail hidden">
+        <div id="pvp-detail-name" class="pvp-det-name"></div>
+        <div id="pvp-detail-class" class="pvp-det-class"></div>
+        <div id="pvp-detail-stats" class="pvp-det-stats"></div>
+        <div id="pvp-result" class="pvp-result" style="margin:12px 0;font-weight:600"></div>
+        <button id="pvp-fight-btn" class="btn-primary">⚔ Сразиться!</button>
+        <button id="pvp-detail-close" class="btn-secondary" style="margin-top:8px">✕ Закрыть</button>
       </div>
     </div>
   </div>
@@ -262,11 +267,13 @@
 <div id="trophy-screen" class="screen hidden">
   <div class="full-screen-layout">
     <div class="screen-header">
-      <button id="trophy-back-btn" class="btn-back">← Back</button>
-      <div class="screen-header-title">🏆 Trophies</div>
+      <button id="trophy-back-btn" class="btn-back back-to-hub">← Назад</button>
+      <div class="screen-header-title">🏆 Трофеи</div>
       <div id="trophy-count" class="trophy-count">0 / 0</div>
     </div>
-    <div id="trophy-grid" class="trophy-grid"></div>
+    <div id="trophy-list" class="trophy-grid"></div>
+    <div style="padding:20px 0 4px;color:#ffda6a;font-weight:700;font-size:1rem">🏅 Рейтинг игроков</div>
+    <div id="leaderboard-list" style="padding-bottom:20px"></div>
   </div>
 </div>
 
@@ -274,22 +281,22 @@
 <div id="donate-screen" class="screen hidden">
   <div class="full-screen-layout">
     <div class="screen-header">
-      <button id="donate-back-btn" class="btn-back">← Back</button>
-      <div class="screen-header-title">💎 Premium Shop</div>
-      <div id="donate-gems-display" class="gems-display">💎 0 Gems</div>
+      <button id="donate-back-btn" class="btn-back back-to-hub">← Назад</button>
+      <div class="screen-header-title">💎 Премиум магазин</div>
+      <div id="donate-gems-label" class="gems-display">💎 0 Алмазов</div>
     </div>
     <div class="donate-layout">
       <div class="donate-section">
-        <div class="donate-section-title">💎 Purchase Gems</div>
-        <div id="donate-gems-grid" class="donate-grid"></div>
+        <div class="donate-section-title">💎 Пополнить алмазы</div>
+        <div id="donate-packages" class="donate-grid"></div>
         <div class="donate-contact">
-          <p>💌 To purchase gems, contact the administrator:</p>
+          <p>💌 Для покупки свяжитесь с администратором:</p>
           <p class="donate-contact-info">📧 admin@sao-aincrad.com</p>
         </div>
       </div>
       <div class="donate-section">
-        <div class="donate-section-title">🛒 Gem Store</div>
-        <div id="donate-items-grid" class="donate-grid"></div>
+        <div class="donate-section-title">🛒 Магазин алмазов</div>
+        <div id="donate-items" class="donate-grid"></div>
       </div>
     </div>
   </div>
@@ -302,7 +309,7 @@
       <div id="npc-modal-icon" class="modal-npc-icon">📖</div>
       <div class="modal-npc-info">
         <div id="npc-modal-name" class="modal-npc-name">NPC</div>
-        <div id="npc-modal-role" class="modal-npc-role">Role</div>
+        <div id="npc-modal-role" class="modal-npc-role">Роль</div>
       </div>
       <button id="npc-modal-close" class="modal-close-btn">✕</button>
     </div>
@@ -314,29 +321,29 @@
 <!-- ═══════════ FLOOR CLEAR ═══════════ -->
 <div id="floor-clear-screen" class="screen hidden">
   <div class="result-box">
-    <div class="result-title green" id="fc-title">Floor 1 Cleared!</div>
+    <div class="result-title green" id="fc-title">Этаж 1 пройден!</div>
     <div class="result-body" id="fc-reward"></div>
-    <button id="fc-next-btn" class="btn-primary">Advance to Next Floor</button>
-    <button id="fc-hub-btn" class="btn-secondary">Return to Hub</button>
+    <button id="next-floor-btn" class="btn-primary">Следующий этаж</button>
+    <button id="go-hub-btn" class="btn-secondary">Вернуться в хаб</button>
   </div>
 </div>
 
 <!-- ═══════════ VICTORY ═══════════ -->
 <div id="victory-screen" class="screen hidden">
   <div class="result-box">
-    <div class="result-title gold">⚔️ GAME CLEAR ⚔️</div>
+    <div class="result-title gold">⚔️ ИГРА ПРОЙДЕНА ⚔️</div>
     <div class="result-body" id="vic-msg"></div>
-    <button id="vic-hub-btn" class="btn-primary">Return to Hub</button>
+    <button id="vic-hub-btn" class="btn-primary">Вернуться в хаб</button>
   </div>
 </div>
 
 <!-- ═══════════ GAME OVER ═══════════ -->
 <div id="gameover-screen" class="screen hidden">
   <div class="result-box">
-    <div class="result-title red">GAME OVER</div>
+    <div class="result-title red">КОНЕЦ ИГРЫ</div>
     <div class="result-body" id="go-msg"></div>
-    <button id="go-retry-btn" class="btn-primary">Try Again</button>
-    <button id="go-hub-btn" class="btn-secondary">Return to Hub</button>
+    <button id="gameover-retry-btn" class="btn-primary">Попробовать снова</button>
+    <button id="go-hub-btn-2" class="btn-secondary">Вернуться в хаб</button>
   </div>
 </div>
 
