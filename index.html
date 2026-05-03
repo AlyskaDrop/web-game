@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Легенда о Наследии Дракона</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ══════════════════ TITLE SCREEN ══════════════════ -->
+  <div id="title-screen" class="screen active">
+    <div class="stars"></div>
+    <div class="title-wrap">
+      <div class="title-dragon">🐉</div>
+      <h1 class="title-main">Легенда о<br>Наследии Дракона</h1>
+      <p class="title-sub">Пошаговая RPG</p>
+      <button id="btn-start" class="btn btn-gold pulse">▶ Начать Игру</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════ NAME SCREEN ══════════════════ -->
+  <div id="name-screen" class="screen">
+    <div class="panel">
+      <div class="panel-title">⚔️ Введите имя героя</div>
+      <input id="name-input" type="text" class="name-input" maxlength="12"
+             placeholder="Дарт" autocomplete="off">
+      <button id="btn-confirm-name" class="btn btn-gold">Начать путь ▶</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════ INTRO SCREEN ══════════════════ -->
+  <div id="intro-screen" class="screen">
+    <div class="story-wrap">
+      <div id="story-content" class="story-content"></div>
+      <button id="btn-next-story" class="btn btn-outline">Далее ▶</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════ MAP SCREEN ══════════════════ -->
+  <div id="map-screen" class="screen">
+    <div class="map-layout">
+
+      <div class="player-hud">
+        <div class="hud-row">
+          <span id="hud-name" class="hud-name">Герой</span>
+          <span class="hud-level">Ур.&nbsp;<span id="hud-level">1</span></span>
+        </div>
+        <div class="hud-bar-row">
+          <span class="bar-lbl hp-col">HP</span>
+          <div class="bar-track"><div id="hud-hp-bar" class="bar-fill hp-fill"></div></div>
+          <span id="hud-hp-text" class="bar-val">150/150</span>
+        </div>
+        <div class="hud-bar-row">
+          <span class="bar-lbl mp-col">MP</span>
+          <div class="bar-track"><div id="hud-mp-bar" class="bar-fill mp-fill"></div></div>
+          <span id="hud-mp-text" class="bar-val">80/80</span>
+        </div>
+        <div class="hud-bar-row">
+          <span class="bar-lbl exp-col">EXP</span>
+          <div class="bar-track"><div id="hud-exp-bar" class="bar-fill exp-fill"></div></div>
+          <span id="hud-exp-text" class="bar-val">0/100</span>
+        </div>
+        <div class="hud-items">
+          <span class="item-badge">💊 ×<span id="hud-potions">3</span></span>
+          <span class="item-badge">💙 ×<span id="hud-elixirs">1</span></span>
+        </div>
+      </div>
+
+      <div class="area-panel">
+        <div id="area-name" class="area-name-title">Горящая Деревня</div>
+        <div id="area-desc"  class="area-desc-text"></div>
+        <div id="area-progress" class="area-progress-text"></div>
+        <div class="map-btns">
+          <button id="btn-explore" class="btn btn-danger">⚔️ Исследовать</button>
+          <button id="btn-rest"    class="btn btn-secondary">💤 Отдохнуть</button>
+        </div>
+        <div id="rest-msg" class="rest-msg"></div>
+      </div>
+
+      <div class="area-map">
+        <div class="area-map-title">🗺️ Карта мира</div>
+        <div id="area-list" class="area-list"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════ BATTLE SCREEN ══════════════════ -->
+  <div id="battle-screen" class="screen">
+    <div id="battle-bg" class="battle-bg"></div>
+    <div class="battle-layout">
+
+      <!-- Enemy -->
+      <div class="battle-enemy" id="battle-enemy-section">
+        <div class="enemy-header">
+          <span id="ename" class="enemy-name-text">Враг</span>
+          <span id="estatus" class="enemy-status-badge"></span>
+        </div>
+        <div class="battle-bar-row">
+          <span class="bar-lbl hp-col">HP</span>
+          <div class="bar-track wide-bar"><div id="ehp-bar" class="bar-fill hp-fill"></div></div>
+          <span id="ehp-text" class="bar-val">100/100</span>
+        </div>
+        <div class="enemy-sprite-wrap">
+          <div id="enemy-sprite" class="enemy-sprite">👹</div>
+        </div>
+      </div>
+
+      <!-- Battle Log -->
+      <div id="battle-log" class="battle-log">
+        <div id="log-content" class="log-content"></div>
+      </div>
+
+      <!-- Player -->
+      <div class="battle-player" id="battle-player-section">
+        <div class="player-battle-header">
+          <span id="pname-battle" class="player-battle-name">Герой</span>
+          <span id="plevel-badge" class="level-badge">Ур.1</span>
+          <span id="pstatus" class="player-status-badge"></span>
+        </div>
+        <div class="battle-bar-row">
+          <span class="bar-lbl hp-col">HP</span>
+          <div class="bar-track wide-bar"><div id="php-bar" class="bar-fill hp-fill"></div></div>
+          <span id="php-text" class="bar-val">150/150</span>
+        </div>
+        <div class="battle-bar-row">
+          <span class="bar-lbl mp-col">MP</span>
+          <div class="bar-track wide-bar"><div id="pmp-bar" class="bar-fill mp-fill"></div></div>
+          <span id="pmp-text" class="bar-val">80/80</span>
+        </div>
+
+        <!-- Action Menu -->
+        <div id="menu-action" class="battle-menu">
+          <button class="cmd-btn" data-act="attack">⚔️<br><small>Атака</small></button>
+          <button class="cmd-btn" data-act="magic">✨<br><small>Магия</small></button>
+          <button class="cmd-btn" data-act="item">🎒<br><small>Предметы</small></button>
+          <button class="cmd-btn" data-act="defend">🛡️<br><small>Защита</small></button>
+        </div>
+
+        <!-- Magic Sub-menu -->
+        <div id="menu-magic" class="battle-menu sub-menu hidden">
+          <div class="sub-header">
+            <button class="back-btn" id="back-magic">◀ Назад</button>
+            <span>✨ Заклинания</span>
+          </div>
+          <div id="magic-list" class="spell-grid"></div>
+        </div>
+
+        <!-- Item Sub-menu -->
+        <div id="menu-item" class="battle-menu sub-menu hidden">
+          <div class="sub-header">
+            <button class="back-btn" id="back-item">◀ Назад</button>
+            <span>🎒 Предметы</span>
+          </div>
+          <div id="item-list" class="item-grid"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════ LEVEL-UP SCREEN ══════════════════ -->
+  <div id="levelup-screen" class="screen">
+    <div class="panel levelup-panel">
+      <div class="levelup-glow">✨</div>
+      <h2 class="levelup-title">ПОВЫШЕНИЕ УРОВНЯ!</h2>
+      <div id="levelup-details" class="levelup-details"></div>
+      <button id="btn-levelup-ok" class="btn btn-gold">Продолжить</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════ GAME OVER SCREEN ══════════════════ -->
+  <div id="gameover-screen" class="screen">
+    <div class="panel gameover-panel">
+      <div class="go-icon">💀</div>
+      <h2 class="go-title">ИГРА ОКОНЧЕНА</h2>
+      <p id="gameover-msg" class="go-msg"></p>
+      <button id="btn-restart" class="btn btn-gold">🔄 Начать заново</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════ WIN SCREEN ══════════════════ -->
+  <div id="win-screen" class="screen">
+    <div class="panel win-panel">
+      <div class="win-icon">🏆</div>
+      <h2 class="win-title">ПОБЕДА!</h2>
+      <h3 class="win-sub">Древний Дракон повержен!</h3>
+      <div id="win-stats" class="win-stats"></div>
+      <p class="win-story">Мир спасён.<br>Наследие Дракона теперь принадлежит вам!</p>
+      <button id="btn-play-again" class="btn btn-gold">🔄 Играть снова</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
