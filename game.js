@@ -61,7 +61,7 @@ const SWORD_SKILLS = [
 const ITEMS = {
   health_potion: { name:"Зелье здоровья", icon:"🧪", desc:"Восстановить 80 HP",  action:"heal",   value:80 },
   mana_crystal:  { name:"Кристалл маны",  icon:"💎", desc:"Восстановить 50 MP",  action:"mana",   value:50 },
-  elixir:        { name:"Эликсир",        icon:"✨", desc:"HP +120 и MP +40",     action:"elixir", value:0  },
+  elixir:        { name:"Эликсир",        icon:"✨", desc:"HP +120 и MP +40",     action:"elixir", hpValue:120, mpValue:40 },
 };
 
 const EQUIPMENT_ITEMS = [
@@ -272,8 +272,8 @@ function loadCharacterFromData(char) {
     owned:    eq.owned    || [],
   };
   recomputeStats();
-  G.hp              = Math.min(char.hp || G.maxHp, G.maxHp);
-  G.mp              = Math.min(char.mp || G.maxMp, G.maxMp);
+  G.hp              = Math.min(char.hp ?? G.maxHp, G.maxHp);
+  G.mp              = Math.min(char.mp ?? G.maxMp, G.maxMp);
   G.skills          = SWORD_SKILLS.filter(s => s.unlockedAt <= G.level);
   G.battlesOnFloor  = 0;
   G.battlesNeeded   = 3 + Math.floor(G.floor / 3);
@@ -896,10 +896,12 @@ async function useItem(key) {
     floatDmg($("player-sprite"), "+"+m+"MP", "heal-dmg");
     log("💎 " + G.playerName + " использует Кристалл маны. +" + m + " MP!", "heal");
   } else if (item.action === "elixir") {
-    G.hp = clamp(G.hp + 120, 0, G.maxHp);
-    G.mp = clamp(G.mp + 40,  0, G.maxMp);
-    floatDmg($("player-sprite"), "+120HP", "heal-dmg");
-    log("✨ " + G.playerName + " использует Эликсир! HP+120, MP+40!", "heal");
+    const hpRestore = item.hpValue || 120;
+    const mpRestore = item.mpValue || 40;
+    G.hp = clamp(G.hp + hpRestore, 0, G.maxHp);
+    G.mp = clamp(G.mp + mpRestore,  0, G.maxMp);
+    floatDmg($("player-sprite"), "+"+hpRestore+"HP", "heal-dmg");
+    log("✨ " + G.playerName + " использует Эликсир! HP+" + hpRestore + ", MP+" + mpRestore + "!", "heal");
   }
   updateBattleHud();
   buildItemButtons();
@@ -1306,6 +1308,7 @@ async function claimQuest(qDef) {
 let pvpOpponents = [];
 
 function showPvpScreen() {
+  $("pvp-record").textContent = `${G.pvpWins||0} Побед / ${G.pvpLosses||0} Пор.`;
   loadPvpOpponents();
   showScreen("pvp-screen");
 }
@@ -1386,9 +1389,11 @@ async function doPvpFight(opp) {
   } else {
     const colLoss = rand(10, 40);
     G.col = Math.max(0, G.col - colLoss);
+    G.pvpLosses = (G.pvpLosses||0) + 1;
     $("pvp-result").textContent = "❌ Поражение. -" + colLoss + " Col";
     await saveCharacter();
   }
+  $("pvp-record").textContent = `${G.pvpWins||0} Побед / ${G.pvpLosses||0} Пор.`;
   $("pvp-fight-btn").disabled = false;
 }
 
@@ -1461,10 +1466,8 @@ function renderDonateScreen() {
       `<div class="pkg-bonus" style="color:#4f4;font-size:.8rem">${pkg.icon||""}</div>` +
       `<button class="btn-primary" style="margin-top:8px">Купить</button>`;
     card.querySelector("button").addEventListener("click", () => {
-      G.gems += pkg.gems;
-      saveCharacter();
-      renderDonateScreen();
-      alert("💎 Получено " + pkg.gems + " алмазов! (симуляция)");
+      // Demo only: no real payment processing
+      alert("💎 Покупка алмазов в демо-режиме недоступна.\nОбратитесь к администратору: admin@sao-aincrad.com");
     });
     pkgEl.appendChild(card);
   });

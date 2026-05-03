@@ -54,9 +54,10 @@ db.exec(`
 app.use(cors());
 app.use(express.json());
 // Serve only the specific front-end files needed by the browser
-app.get("/",         (req, res) => res.sendFile(path.join(__dirname, "index.html")));
-app.get("/game.js",  (req, res) => res.sendFile(path.join(__dirname, "game.js")));
-app.get("/style.css",(req, res) => res.sendFile(path.join(__dirname, "style.css")));
+const staticRateLimit = makeRateLimit("api", 60);
+app.get("/",         staticRateLimit, (req, res) => res.sendFile(path.join(__dirname, "index.html")));
+app.get("/game.js",  staticRateLimit, (req, res) => res.sendFile(path.join(__dirname, "game.js")));
+app.get("/style.css",staticRateLimit, (req, res) => res.sendFile(path.join(__dirname, "style.css")));
 
 // ── HMAC-signed token auth ─────────────────────────────────────────────────────
 const TOKEN_SECRET = process.env.TOKEN_SECRET || crypto.randomBytes(32).toString("hex");
@@ -218,7 +219,14 @@ app.get("/api/players", apiRateLimit, authMiddleware, (req, res) => {
     WHERE c.user_id != ?
     ORDER BY c.level DESC
   `).all(req.user.id);
-  res.json(rows);
+  // Compute combat stats from level (same formula as client-side)
+  const withStats = rows.map(r => ({
+    ...r,
+    max_hp: 120 + (r.level - 1) * 22,
+    atk:    20  + (r.level - 1) * 5,
+    def:    10  + (r.level - 1) * 3,
+  }));
+  res.json(withStats);
 });
 
 // ── POST /api/pvp ──────────────────────────────────────────────────────────────
