@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sword Art Online – Web RPG</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════
+       TITLE SCREEN
+  ══════════════════════════════════════════════════ -->
+  <div id="title-screen" class="screen">
+    <div class="title-sword">⚔️</div>
+    <div class="title-logo">SWORD ART ONLINE</div>
+    <div class="title-sub">Aincrad Chronicles</div>
+
+    <input
+      id="name-input"
+      type="text"
+      maxlength="18"
+      placeholder="Enter your name…"
+      autocomplete="off"
+      spellcheck="false"
+    />
+    <button id="start-btn" class="btn-primary">Begin Adventure</button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       GAME SCREEN
+  ══════════════════════════════════════════════════ -->
+  <div id="game-screen" class="screen hidden">
+    <div class="game-wrapper">
+
+      <!-- Floor / XP bar -->
+      <div class="floor-bar">
+        <span id="floor-label" class="floor-label">Aincrad – Floor 1</span>
+        <div class="xp-bar-wrap">
+          <div class="xp-bar-bg"><div id="xp-fill" class="xp-bar-fill" style="width:0%"></div></div>
+          <div id="xp-text" class="xp-text">0 / 50 XP</div>
+        </div>
+        <span id="level-label" style="font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--gold)">Lv.1</span>
+      </div>
+
+      <!-- Battle area -->
+      <div class="battle-area">
+
+        <!-- Player panel -->
+        <div id="player-panel" class="combatant-panel player-panel">
+          <span class="panel-label">Player</span>
+          <div id="player-sprite" class="char-sprite">🗡️</div>
+          <div id="player-name" class="char-name">Kirito</div>
+          <div class="stat-bars">
+            <div class="stat-row">
+              <span class="stat-icon">❤️</span>
+              <div class="bar-bg"><div id="player-hp-fill" class="bar-fill hp" style="width:100%"></div></div>
+              <span id="player-hp-val" class="bar-val">120 / 120</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-icon">💧</span>
+              <div class="bar-bg"><div id="player-mp-fill" class="bar-fill mp" style="width:100%"></div></div>
+              <span id="player-mp-val" class="bar-val">60 / 60</span>
+            </div>
+          </div>
+          <div id="player-status" class="status-tags"></div>
+        </div>
+
+        <!-- Enemy panel -->
+        <div id="enemy-panel" class="combatant-panel enemy-panel">
+          <span class="panel-label">Enemy</span>
+          <div id="enemy-sprite" class="char-sprite">🐗</div>
+          <div id="enemy-name" class="char-name">???</div>
+          <div class="stat-bars">
+            <div class="stat-row">
+              <span class="stat-icon">❤️</span>
+              <div class="bar-bg"><div id="enemy-hp-fill" class="bar-fill hp" style="width:100%"></div></div>
+              <span id="enemy-hp-val" class="bar-val">? / ?</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-icon">💧</span>
+              <div class="bar-bg"><div id="enemy-mp-fill" class="bar-fill mp" style="width:100%"></div></div>
+              <span id="enemy-mp-val" class="bar-val">? / ?</span>
+            </div>
+          </div>
+          <div id="enemy-status" class="status-tags"></div>
+        </div>
+
+        <!-- Battle log -->
+        <div id="battle-log" class="battle-log-wrap"></div>
+      </div>
+
+      <!-- Action bar -->
+      <div id="action-bar" class="action-bar" style="position:relative">
+
+        <!-- Basic actions -->
+        <div class="action-group">
+          <button id="attack-btn" class="btn-action">⚔ Attack</button>
+          <button id="items-btn" class="btn-action item-btn">🎒 Items</button>
+          <button id="flee-btn"  class="btn-action flee-btn">🏃 Flee</button>
+        </div>
+
+        <div class="action-sep"></div>
+
+        <!-- Sword skills (populated by JS) -->
+        <div id="skills-bar" class="action-group"></div>
+
+        <!-- Item pop-up panel -->
+        <div id="item-panel" class="item-panel hidden">
+          <div id="items-bar" class="action-group"></div>
+        </div>
+
+      </div>
+
+    </div><!-- .game-wrapper -->
+  </div><!-- #game-screen -->
+
+  <!-- ═══════════════════════════════════════════════
+       FLOOR CLEAR SCREEN
+  ══════════════════════════════════════════════════ -->
+  <div id="floor-clear-screen" class="screen hidden">
+    <div class="screen-title" id="fc-floor">Floor 1 Cleared!</div>
+    <div class="screen-body" id="fc-reward"></div>
+    <button id="fc-next-btn" class="btn-primary">Advance to Next Floor</button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       VICTORY SCREEN
+  ══════════════════════════════════════════════════ -->
+  <div id="victory-screen" class="screen hidden">
+    <div class="screen-title">GAME CLEAR!</div>
+    <div class="screen-body" id="vic-msg"></div>
+    <button id="vic-new-btn" class="btn-primary">Play Again</button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       GAME OVER SCREEN
+  ══════════════════════════════════════════════════ -->
+  <div id="gameover-screen" class="screen hidden">
+    <div class="screen-title">GAME OVER</div>
+    <div class="screen-body" id="go-msg"></div>
+    <button id="go-retry-btn" class="btn-primary">Try Again</button>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
