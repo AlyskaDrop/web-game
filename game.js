@@ -1267,8 +1267,9 @@ function renderQuestScreen() {
   const el = $("quest-list");
   el.innerHTML = "";
   QUESTS.forEach(qDef => {
+    const target = qDef.req.count || qDef.req.floor || 1;
     const q    = G.quests.find(x=>x.id===qDef.id) || { id:qDef.id, progress:0, completed:false, claimed:false };
-    const pct  = Math.min(100, Math.floor((q.progress/qDef.target)*100));
+    const pct  = Math.min(100, Math.floor((q.progress/target)*100));
     const row  = document.createElement("div");
     row.className = "quest-row";
     row.innerHTML =
@@ -1276,8 +1277,8 @@ function renderQuestScreen() {
       `<div class="quest-desc">${qDef.desc}</div>` +
       `<div class="quest-progress-bar"><div class="quest-progress-fill" style="width:${pct}%"></div></div>` +
       `<div class="quest-meta">` +
-      `  <span>${q.progress} / ${qDef.target}</span>` +
-      `  <span>Награда: ${qDef.rewardCol} Col${qDef.rewardGems?" • "+qDef.rewardGems+" 💎":""}</span>` +
+      `  <span>${q.progress} / ${target}</span>` +
+      `  <span>Награда: ${qDef.reward.col} Col${qDef.reward.xp?" • "+qDef.reward.xp+" XP":""}</span>` +
       `</div>` +
       (q.completed && !q.claimed
         ? `<button class="btn-primary claim-btn">Получить награду</button>`
@@ -1292,9 +1293,9 @@ async function claimQuest(qDef) {
   const q = G.quests.find(x=>x.id===qDef.id);
   if (!q || !q.completed || q.claimed) return;
   q.claimed = true;
-  G.col  += qDef.rewardCol;
-  G.gems += qDef.rewardGems || 0;
-  log("🎁 Задание «" + qDef.name + "» выполнено! +" + qDef.rewardCol + " Col!", "system");
+  G.col += qDef.reward.col;
+  G.xp  += qDef.reward.xp || 0;
+  log("🎁 Задание «" + qDef.name + "» выполнено! +" + qDef.reward.col + " Col!", "system");
   await saveCharacter();
   renderQuestScreen();
 }
@@ -1313,7 +1314,7 @@ async function loadPvpOpponents() {
   $("pvp-list").innerHTML = `<p style="color:#888">Загрузка соперников…</p>`;
   try {
     const data = await apiGet("/api/players");
-    pvpOpponents = (data.players || []).filter(p => p.userId !== AUTH.userId);
+    pvpOpponents = (data || []).filter(p => p.id !== (G.charId || 0));
     renderPvpScreen();
   } catch {
     $("pvp-list").innerHTML = `<p style="color:#f44">Ошибка загрузки. Сервер недоступен.</p>`;
@@ -1371,18 +1372,16 @@ async function doPvpFight(opp) {
 
   try {
     await apiPost("/api/pvp", {
-      challengerId: AUTH.userId,
-      defenderId:   opp.userId,
-      winner:       winner === "player" ? AUTH.userId : opp.userId
+      defender_id: opp.id,
+      winner:      winner === "player" ? "attacker" : "defender"
     });
   } catch {/* offline */ }
 
   if (winner === "player") {
     const colGain = rand(30, 80) * G.floor;
     G.col += colGain;
-    $("pvp-result").innerHTML = `✅ <span style="color:#4f4">Победа!</span> +" + colGain + " Col`;
-    $("pvp-result").innerHTML = "✅ Победа! +" + colGain + " Col";
-    G.bossesDefeated = (G.bossesDefeated||0) + 1; // counts pvp as fight
+    G.pvpWins = (G.pvpWins||0) + 1;
+    $("pvp-result").textContent = "✅ Победа! +" + colGain + " Col";
     await saveCharacter();
   } else {
     const colLoss = rand(10, 40);
@@ -1457,9 +1456,9 @@ function renderDonateScreen() {
     card.className = "donate-pkg-card";
     card.innerHTML =
       `<div class="pkg-gems">💎 ${pkg.gems}</div>` +
-      `<div class="pkg-name">${pkg.name}</div>` +
+      `<div class="pkg-name">${pkg.label}</div>` +
       `<div class="pkg-price">${pkg.price}</div>` +
-      `<div class="pkg-bonus" style="color:#4f4;font-size:.8rem">${pkg.bonus||""}</div>` +
+      `<div class="pkg-bonus" style="color:#4f4;font-size:.8rem">${pkg.icon||""}</div>` +
       `<button class="btn-primary" style="margin-top:8px">Купить</button>`;
     card.querySelector("button").addEventListener("click", () => {
       G.gems += pkg.gems;
@@ -1494,13 +1493,7 @@ function buyGemItemButton(container, gi) {
 async function buyGemItem(gi) {
   if (G.gems < gi.cost) { alert("Недостаточно алмазов!"); return; }
   G.gems -= gi.cost;
-  if (gi.type === "item") {
-    G.inventory[gi.itemKey] = (G.inventory[gi.itemKey]||0) + (gi.amount||1);
-  } else if (gi.type === "col") {
-    G.col += gi.amount;
-  } else if (gi.type === "revive") {
-    G.inventory.revive_scroll = (G.inventory.revive_scroll||0) + 1;
-  }
+  G.inventory[gi.item] = (G.inventory[gi.item]||0) + (gi.qty||1);
   await saveCharacter();
   renderDonateScreen();
 }

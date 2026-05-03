@@ -52,7 +52,17 @@ db.exec(`
 // ── Middleware ─────────────────────────────────────────────────────────────────
 app.use(cors());
 app.use(express.json());
-app.use(express.static(__dirname));
+// Serve only safe static files (not server-side source)
+const staticDir = __dirname;
+app.use(express.static(staticDir, {
+  index: "index.html",
+  setHeaders: (res, filePath) => {
+    const allowed = /\.(html|css|js|png|jpg|jpeg|gif|ico|svg|woff2?|ttf|eot)$/i;
+    if (!allowed.test(filePath) && !filePath.endsWith("index.html")) {
+      res.status(403);
+    }
+  }
+}));
 
 // ── Token auth ─────────────────────────────────────────────────────────────────
 function authMiddleware(req, res, next) {
@@ -72,12 +82,27 @@ function authMiddleware(req, res, next) {
   }
 }
 
+// Simple in-memory rate limiter for auth routes (max 20 req/min per IP)
+const authRateMap = new Map();
+function authRateLimit(req, res, next) {
+  const ip  = req.ip || req.connection.remoteAddress || "unknown";
+  const now = Date.now();
+  const entry = authRateMap.get(ip) || { count:0, reset: now + 60000 };
+  if (now > entry.reset) { entry.count = 0; entry.reset = now + 60000; }
+  entry.count++;
+  authRateMap.set(ip, entry);
+  if (entry.count > 20) {
+    return res.status(429).json({ error: "Слишком много запросов. Попробуйте позже." });
+  }
+  next();
+}
+
 function makeToken(userId, username) {
-  return Buffer.from(`${userId}:${username}:${Date.now()}`).toString("base64");
+  return Buffer.from(`${userId}:${username}`).toString("base64");
 }
 
 // ── POST /api/register ─────────────────────────────────────────────────────────
-app.post("/api/register", async (req, res) => {
+app.post("/api/register", authRateLimit, async (req, res) => {
   const { username, password } = req.body || {};
   if (!username || !password) return res.status(400).json({ error: "Требуется имя пользователя и пароль" });
   if (username.length < 3 || username.length > 16) return res.status(400).json({ error: "Имя: от 3 до 16 символов" });
@@ -97,7 +122,7 @@ app.post("/api/register", async (req, res) => {
 });
 
 // ── POST /api/login ────────────────────────────────────────────────────────────
-app.post("/api/login", async (req, res) => {
+app.post("/api/login", authRateLimit, async (req, res) => {
   const { username, password } = req.body || {};
   if (!username || !password) return res.status(400).json({ error: "Требуется имя пользователя и пароль" });
   const user = db.prepare("SELECT * FROM users WHERE username = ?").get(username);
