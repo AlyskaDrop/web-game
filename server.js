@@ -4,6 +4,7 @@ const Database = require("better-sqlite3");
 const bcrypt   = require("bcryptjs");
 const cors     = require("cors");
 const path     = require("path");
+const crypto   = require("crypto");
 
 const app = express();
 const db  = new Database(path.join(__dirname, "game.db"));
@@ -52,54 +53,72 @@ db.exec(`
 // ── Middleware ─────────────────────────────────────────────────────────────────
 app.use(cors());
 app.use(express.json());
-// Serve only safe static files (not server-side source)
-const staticDir = __dirname;
-app.use(express.static(staticDir, {
-  index: "index.html",
-  setHeaders: (res, filePath) => {
-    const allowed = /\.(html|css|js|png|jpg|jpeg|gif|ico|svg|woff2?|ttf|eot)$/i;
-    if (!allowed.test(filePath) && !filePath.endsWith("index.html")) {
-      res.status(403);
-    }
-  }
-}));
+// Serve only the specific front-end files needed by the browser
+app.get("/",         (req, res) => res.sendFile(path.join(__dirname, "index.html")));
+app.get("/game.js",  (req, res) => res.sendFile(path.join(__dirname, "game.js")));
+app.get("/style.css",(req, res) => res.sendFile(path.join(__dirname, "style.css")));
 
-// ── Token auth ─────────────────────────────────────────────────────────────────
+// ── HMAC-signed token auth ─────────────────────────────────────────────────────
+const TOKEN_SECRET = process.env.TOKEN_SECRET || crypto.randomBytes(32).toString("hex");
+
+function makeToken(userId, username) {
+  const payload = Buffer.from(`${userId}:${username}:${Date.now()}`).toString("base64url");
+  const sig = crypto.createHmac("sha256", TOKEN_SECRET).update(payload).digest("base64url");
+  return `${payload}.${sig}`;
+}
+
+function verifyToken(token) {
+  if (typeof token !== "string") return null;
+  const dotIdx = token.lastIndexOf(".");
+  if (dotIdx < 1) return null;
+  const payload = token.slice(0, dotIdx);
+  const sig = token.slice(dotIdx + 1);
+  let expected;
+  try {
+    expected = crypto.createHmac("sha256", TOKEN_SECRET).update(payload).digest("base64url");
+  } catch {
+    return null;
+  }
+  if (sig.length !== expected.length) return null;
+  if (!crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) return null;
+  const decoded = Buffer.from(payload, "base64url").toString("utf8");
+  const [userId, username] = decoded.split(":");
+  if (!userId || !username) return null;
+  return { userId: Number(userId), username };
+}
+
 function authMiddleware(req, res, next) {
   const auth = req.headers.authorization;
   if (!auth || !auth.startsWith("Bearer ")) {
-    return res.status(401).json({ error: "Unauthorized" });
+    return res.status(401).json({ error: "Необходима авторизация" });
   }
-  try {
-    const decoded = Buffer.from(auth.slice(7), "base64").toString("utf8");
-    const [userId, username] = decoded.split(":");
-    const user = db.prepare("SELECT * FROM users WHERE id = ? AND username = ?").get(Number(userId), username);
-    if (!user) return res.status(401).json({ error: "Invalid token" });
-    req.user = user;
-    next();
-  } catch {
-    return res.status(401).json({ error: "Invalid token" });
-  }
-}
-
-// Simple in-memory rate limiter for auth routes (max 20 req/min per IP)
-const authRateMap = new Map();
-function authRateLimit(req, res, next) {
-  const ip  = req.ip || req.connection.remoteAddress || "unknown";
-  const now = Date.now();
-  const entry = authRateMap.get(ip) || { count:0, reset: now + 60000 };
-  if (now > entry.reset) { entry.count = 0; entry.reset = now + 60000; }
-  entry.count++;
-  authRateMap.set(ip, entry);
-  if (entry.count > 20) {
-    return res.status(429).json({ error: "Слишком много запросов. Попробуйте позже." });
-  }
+  const info = verifyToken(auth.slice(7));
+  if (!info) return res.status(401).json({ error: "Недействительный токен" });
+  const user = db.prepare("SELECT id, username FROM users WHERE id = ? AND username = ?").get(info.userId, info.username);
+  if (!user) return res.status(401).json({ error: "Пользователь не найден" });
+  req.user = user;
   next();
 }
 
-function makeToken(userId, username) {
-  return Buffer.from(`${userId}:${username}`).toString("base64");
+// In-memory rate limiter (max 20 req/min per IP for auth, 60 req/min for API)
+const rateMaps = { auth: new Map(), api: new Map() };
+function makeRateLimit(key, limit) {
+  return function rateLimit(req, res, next) {
+    const ip  = req.ip || req.socket.remoteAddress || "unknown";
+    const now = Date.now();
+    const map = rateMaps[key];
+    const entry = map.get(ip) || { count: 0, reset: now + 60000 };
+    if (now > entry.reset) { entry.count = 0; entry.reset = now + 60000; }
+    entry.count++;
+    map.set(ip, entry);
+    if (entry.count > limit) {
+      return res.status(429).json({ error: "Слишком много запросов. Попробуйте позже." });
+    }
+    next();
+  };
 }
+const authRateLimit = makeRateLimit("auth", 20);
+const apiRateLimit  = makeRateLimit("api",  60);
 
 // ── POST /api/register ─────────────────────────────────────────────────────────
 app.post("/api/register", authRateLimit, async (req, res) => {
@@ -135,7 +154,7 @@ app.post("/api/login", authRateLimit, async (req, res) => {
 });
 
 // ── GET /api/me ────────────────────────────────────────────────────────────────
-app.get("/api/me", authMiddleware, (req, res) => {
+app.get("/api/me", apiRateLimit, authMiddleware, (req, res) => {
   const char = db.prepare("SELECT * FROM characters WHERE user_id = ?").get(req.user.id);
   if (!char) return res.json({ user: { id: req.user.id, username: req.user.username }, character: null });
   res.json({
@@ -145,7 +164,7 @@ app.get("/api/me", authMiddleware, (req, res) => {
 });
 
 // ── POST /api/character ────────────────────────────────────────────────────────
-app.post("/api/character", authMiddleware, (req, res) => {
+app.post("/api/character", apiRateLimit, authMiddleware, (req, res) => {
   const { name, class_name, class_icon } = req.body || {};
   if (!name || !class_name) return res.status(400).json({ error: "Требуется имя и класс" });
   if (db.prepare("SELECT id FROM characters WHERE user_id = ?").get(req.user.id)) {
@@ -159,7 +178,7 @@ app.post("/api/character", authMiddleware, (req, res) => {
 });
 
 // ── PUT /api/character ─────────────────────────────────────────────────────────
-app.put("/api/character", authMiddleware, (req, res) => {
+app.put("/api/character", apiRateLimit, authMiddleware, (req, res) => {
   const d = req.body || {};
   db.prepare(`
     UPDATE characters SET
@@ -169,19 +188,19 @@ app.put("/api/character", authMiddleware, (req, res) => {
       updated_at=datetime('now')
     WHERE user_id=?
   `).run(
-    d.level||1, d.xp||0, d.floor||1, d.hp||0, d.mp||0, d.col||0, d.gems||0,
-    JSON.stringify(d.inventory||{}),
-    JSON.stringify(d.equipment||{}),
-    JSON.stringify(d.quests||[]),
-    d.pvpWins||0, d.pvpLosses||0,
-    JSON.stringify(d.trophies||[]),
+    d.level ?? 1, d.xp ?? 0, d.floor ?? 1, d.hp ?? 0, d.mp ?? 0, d.col ?? 0, d.gems ?? 0,
+    JSON.stringify(d.inventory || {}),
+    JSON.stringify(d.equipment || {}),
+    JSON.stringify(d.quests    || []),
+    d.pvpWins ?? 0, d.pvpLosses ?? 0,
+    JSON.stringify(d.trophies  || []),
     req.user.id
   );
   res.json({ success: true });
 });
 
 // ── GET /api/leaderboard ───────────────────────────────────────────────────────
-app.get("/api/leaderboard", (req, res) => {
+app.get("/api/leaderboard", apiRateLimit, (req, res) => {
   const rows = db.prepare(`
     SELECT name, class_name, class_icon, level, floor
     FROM characters
@@ -192,7 +211,7 @@ app.get("/api/leaderboard", (req, res) => {
 });
 
 // ── GET /api/players ──────────────────────────────────────────────────────────
-app.get("/api/players", authMiddleware, (req, res) => {
+app.get("/api/players", apiRateLimit, authMiddleware, (req, res) => {
   const rows = db.prepare(`
     SELECT c.id, c.name, c.class_name, c.class_icon, c.level, c.floor, c.pvp_wins, c.pvp_losses
     FROM characters c
@@ -203,7 +222,7 @@ app.get("/api/players", authMiddleware, (req, res) => {
 });
 
 // ── POST /api/pvp ──────────────────────────────────────────────────────────────
-app.post("/api/pvp", authMiddleware, (req, res) => {
+app.post("/api/pvp", apiRateLimit, authMiddleware, (req, res) => {
   const { defender_id, winner } = req.body || {};
   const attacker = db.prepare("SELECT * FROM characters WHERE user_id = ?").get(req.user.id);
   if (!attacker) return res.status(400).json({ error: "Персонаж не найден" });

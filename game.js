@@ -545,7 +545,7 @@ function openNpcModal(npc) {
   } else if (npc.type === "armor") {
     buildShopContent(content, "armor");
   } else {
-    content.innerHTML = `<p style="color:#bbb;line-height:1.7">Аинкрад – замок из 100 этажей, парящий в небе. Игроки заперты здесь до тех пор, пока кто-то не пройдёт все этажи. На каждом этаже тебя ждут испытания и могущественные боссы.</p>`;
+    content.innerHTML = `<p style="color:#bbb;line-height:1.7">Аинкрад – замок из 10 этажей, парящий в небе. Игроки заперты здесь до тех пор, пока кто-то не пройдёт все этажи. На каждом этаже тебя ждут испытания и могущественные боссы.</p>`;
   }
   $("npc-modal").classList.remove("hidden");
 }
@@ -1423,7 +1423,7 @@ async function loadLeaderboard() {
     const data = await apiGet("/api/leaderboard");
     const el   = $("leaderboard-list");
     el.innerHTML = "";
-    (data.leaderboard || []).forEach((p, i) => {
+    (Array.isArray(data) ? data : []).forEach((p, i) => {
       const row = document.createElement("div");
       row.style.cssText = "display:flex;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid #333;";
       row.innerHTML =
@@ -1571,12 +1571,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Try restore session
   const savedToken = localStorage.getItem("sao_token");
   if (savedToken) {
-    const parts = atob(savedToken).split(":");
-    AUTH.token    = savedToken;
-    AUTH.userId   = parseInt(parts[0]);
-    AUTH.username = parts[1];
+    AUTH.token = savedToken;
     try {
       const me = await apiGet("/api/me");
+      AUTH.userId   = me.user.id;
+      AUTH.username = me.user.username;
       loadCharacterFromData(me.character);
       showHub();
       return;
